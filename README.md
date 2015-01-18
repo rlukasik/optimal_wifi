@@ -14,10 +14,16 @@ Features
 
 This app doesn't require the information about location and it can rely on periodic checks. However the enabled location information helps to optimize the WiFi connectivity.
 
+Build
+-----
+You need SailfishOS development environment: https://sailfishos.org/develop.html
+
+Open the project and build RPM.
+
 References
 ----------
 * https://01.org/connman
 
 Keywords:
 ---------
-intelligent, automatic, auto, wifi, wireless, wi-fi, wlan, hotspot, network, toggle, switch, 2G, 3G, 4G, battery, power, conserve, drain, location, cell, gps, manager, manage
+intelligent, automatic, auto, wifi, wireless, wi-fi, wlan, hotspot, network, toggle, switch, 2G, 3G, 4G, battery, power, conserve, drain, location, cell, gps, manager, manage, sailfish, jolla
