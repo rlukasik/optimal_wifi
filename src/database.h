@@ -133,7 +133,6 @@ void Database<T>::save() const
         qWarning() << QTime::currentTime().toString() << "Couldn't open" << m_fileName << "file.";
         return;
     }
-    qDebug() << QTime::currentTime().toString() << "Database::save()";
     QJsonObject lObject;
     write(lObject);
     QJsonDocument saveDoc(lObject);
