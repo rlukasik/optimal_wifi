@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=Optimal_WiFi
+Exec=Optimal_WiFi
+Name=Optimal_WiFi
+# translation example:
+# your app name in German locale (de)
+Name[de]=Optimal_WiFi
+
