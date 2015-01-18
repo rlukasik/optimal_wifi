@@ -78,7 +78,7 @@ WirelessInterface::WirelessInterface(QNetworkConfiguration::BearerType bearer,
 WirelessInterface::~WirelessInterface()
 {
     delete m_dcon;
-    if (m_dif) delete m_dif;
+    delete m_dif;
     delete m_nmgr;
 }
 
