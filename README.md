@@ -4,20 +4,20 @@ Native Sailfish OS application to control Jolla's WiFi using periodic check and 
 
 Features
 --------
-*Turns WiFi on periodically and when near a known hotspot.
-
-*Turns WiFi off when disconnected from WiFi network.
-
-*Automatically learns the WiFi hotspot locations.
-
-*Uses the network location. No GPS battery drain.
-
-*Allows to change the interval between hotspots checks.
-
-*Uses Location settings from Settings->System menu.
-
-*As known hotspots considers Saved networks in Settings->WLAN.
+* Turns WiFi on periodically and when near a known hotspot.
+* Turns WiFi off when disconnected from WiFi network.
+* Automatically learns the WiFi hotspot locations.
+* Uses the network location. No GPS battery drain.
+* Allows to change the interval between hotspots checks.
+* Uses Location settings from Settings->System menu.
+* As known hotspots considers Saved networks in Settings->WLAN.
 
 This app doesn't require the information about location and it can rely on periodic checks. However the enabled location information helps to optimize the WiFi connectivity.
 
-Keywords: intelligent, automatic, auto, wifi, wireless, wi-fi, wlan, hotspot, network, toggle, switch, 2G, 3G, 4G, battery, power, conserve, drain, location, cell, gps, manager, manage
+References
+----------
+* https://01.org/connman
+
+Keywords:
+---------
+intelligent, automatic, auto, wifi, wireless, wi-fi, wlan, hotspot, network, toggle, switch, 2G, 3G, 4G, battery, power, conserve, drain, location, cell, gps, manager, manage
