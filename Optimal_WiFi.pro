@@ -21,8 +21,7 @@ SOURCES += src/Optimal_WiFi.cpp \
     src/wifi.cpp \
     src/gsm.cpp \
     src/wirelessinterface.cpp \
-    src/location.cpp \
-    src/area.cpp
+    src/location.cpp
 
 OTHER_FILES += qml/Optimal_WiFi.qml \
     qml/cover/CoverPage.qml \
