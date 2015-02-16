@@ -32,10 +32,12 @@
 #include "device.h"
 #include <QTimer>
 
-Wifi::Wifi(QObject *parent):
+Wifi::Wifi(bool useSlots, QObject *parent):
     WirelessInterface(QNetworkConfiguration::BearerWLAN, parent)
 {
-    initSlots();
+    if (useSlots) {
+        initSlots();
+    }
 }
 
 void Wifi::activate()
@@ -64,7 +66,7 @@ void Wifi::breakScan()
 bool Wifi::status(const WirelessInterface::InterfaceProperties &prop)
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
-    const Wifi wifi;
+    const Wifi wifi(false);
     return wifi.WirelessInterface::status(prop);
 }
 

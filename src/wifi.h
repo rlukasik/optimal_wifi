@@ -38,7 +38,7 @@ class Wifi: public WirelessInterface
     Q_OBJECT
 
 public:
-    explicit Wifi(QObject *parent = 0);
+    explicit Wifi(bool useSlots = true, QObject *parent = 0);
 
     void activate();
 
