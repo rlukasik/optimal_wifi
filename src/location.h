@@ -76,15 +76,15 @@ private:
     class Area
     {
     public:
-        explicit Area();
+        explicit Area() {}
 
-        explicit Area(const QGeoCoordinate &);
+        explicit Area(const QGeoCoordinate &c): m_c(c) {}
 
-        explicit Area(const double &, const double &);
+        explicit Area(const double &la, const double &lo): m_c(la,lo) {}
 
-        explicit Area(const QJsonObject &);
+        explicit Area(const QJsonObject &json) { read(json); }
 
-        ~Area();
+        ~Area() {}
 
         bool operator ==(const Area &a) const {return RADIUS > m_c.distanceTo(a.m_c);}
 
@@ -98,9 +98,19 @@ private:
 
         friend bool operator !=(const QGeoCoordinate &, const Location::Area &);
 
-        void read(const QJsonObject &);
+        void read(const QJsonObject &json)
+        {
+            qDebug() << QTime::currentTime().toString() << __FUNCTION__ << json;
+            m_c.setLatitude(json[JSON_LATITUDE].toDouble());
+            m_c.setLongitude(json[JSON_LONGITUDE].toDouble());
+        }
 
-        void write(QJsonObject &) const;
+        void write(QJsonObject &json) const
+        {
+            qDebug() << QTime::currentTime().toString() << __FUNCTION__;
+            json[JSON_LATITUDE] = m_c.latitude();
+            json[JSON_LONGITUDE] = m_c.longitude();
+        }
 
         void setCoordinate(const QGeoCoordinate &c) {m_c = c;}
 
