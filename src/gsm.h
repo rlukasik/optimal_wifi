@@ -42,7 +42,7 @@ class Gsm : public WirelessInterface
 public:
     explicit Gsm(QObject *parent = 0);
 
-    //void inactivate();
+    void inactivate();
 
 signals:
 

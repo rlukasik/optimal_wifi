@@ -36,7 +36,7 @@ Gsm::Gsm(QObject *parent) :
 {
 
 }
-/*
+
 void Gsm::inactivate()
 {
 
@@ -53,4 +53,3 @@ void Gsm::inactivate()
     }
 
 }
-*/
