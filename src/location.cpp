@@ -76,23 +76,19 @@ void Location::positionUpdated(const QGeoPositionInfo &update)
     m_error = false;
     QGeoCoordinate uc = update.coordinate();
     qDebug() << QTime::currentTime().toString() << "Current position is" << uc.toString();
-    if (m_currentArea.coordinate().isValid() && (m_currentArea == uc)) {
-        qDebug() << QTime::currentTime().toString() << "Position did not change";
-    } else {
-        m_currentArea = Area(uc);
-        int i = m_areas->indexOf(m_currentArea);
-        if (i > -1) {
-            if (Wifi::status(WirelessInterface::Connected)) {
-                m_areas->move(i, m_areas->size()-1);
-            } else {
-                emit areaEntered();
-            }
-        } else if (Wifi::status(WirelessInterface::Connected)) {
-            qDebug() << QTime::currentTime().toString() << "Current possition added to the list";
-            m_areas->append(m_currentArea);
-            if (BUFFER_SIZE < m_areas->size()) {
-                m_areas->removeFirst();
-            }
+    m_currentArea = Area(uc);
+    int i = m_areas->indexOf(m_currentArea);
+    if (i > -1) {
+        if (Wifi::status(WirelessInterface::Connected)) {
+            m_areas->move(i, m_areas->size()-1);
+        } else {
+            emit areaEntered();
+        }
+    } else if (Wifi::status(WirelessInterface::Connected)) {
+        qDebug() << QTime::currentTime().toString() << "Current possition added to the list";
+        m_areas->append(m_currentArea);
+        if (BUFFER_SIZE < m_areas->size()) {
+            m_areas->removeFirst();
         }
     }
     //start Timer
