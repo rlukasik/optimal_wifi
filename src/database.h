@@ -34,7 +34,7 @@
 // {
 // public:
 // T(const QJsonObject &json);
-// void write(QJsonObject &) const;
+// bool write(QJsonObject &) const;
 // }
 
 #ifndef DATABASE_H
@@ -104,8 +104,9 @@ void Database<T>::write(QJsonObject &json) const
     QJsonArray aArray;
     foreach (const T t, m_elements) {
         QJsonObject aObject;
-        t.write(aObject);
-        aArray.append(aObject);
+        if (t.write(aObject)) {
+            aArray.append(aObject);
+        }
     }
     json[m_name] = aArray;
 }

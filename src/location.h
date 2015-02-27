@@ -90,13 +90,9 @@ private:
 
         bool operator ==(const QGeoCoordinate &c) const {return RADIUS > m_c.distanceTo(c);}
 
-        friend bool operator ==(const QGeoCoordinate &, const Location::Area &);
-
         bool operator !=(const Area &a) const {return !(*this == a);}
 
         bool operator !=(const QGeoCoordinate &c) const {return !(*this == c);}
-
-        friend bool operator !=(const QGeoCoordinate &, const Location::Area &);
 
         void read(const QJsonObject &json)
         {
@@ -105,11 +101,15 @@ private:
             m_c.setLongitude(json[JSON_LONGITUDE].toDouble());
         }
 
-        void write(QJsonObject &json) const
+        bool write(QJsonObject &json) const
         {
             qDebug() << QTime::currentTime().toString() << __FUNCTION__;
+            if (!m_c.isValid()) {
+                return false;
+            }
             json[JSON_LATITUDE] = m_c.latitude();
             json[JSON_LONGITUDE] = m_c.longitude();
+            return true;
         }
 
         void setCoordinate(const QGeoCoordinate &c) {m_c = c;}
@@ -143,12 +143,12 @@ private:
 
 inline bool operator ==(const QGeoCoordinate &c, const Location::Area &a)
 {
-    return RADIUS > a.m_c.distanceTo(c);
+    return a == c;
 }
 
 inline bool operator !=(const QGeoCoordinate &c, const Location::Area &a)
 {
-    return !(c == a);
+    return !(a == c);
 }
 
 #endif // LOCATION_H

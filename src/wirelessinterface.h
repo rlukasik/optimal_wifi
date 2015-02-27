@@ -68,7 +68,11 @@ public slots:
 
     virtual void onlineStateChanged();
 
-protected:    
+protected:
+    WirelessInterface(const WirelessInterface &);
+
+    WirelessInterface& operator =(const WirelessInterface &);
+
     void onOff(const bool&);
 
     void initSlots();

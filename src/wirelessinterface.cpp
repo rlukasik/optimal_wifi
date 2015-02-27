@@ -141,7 +141,8 @@ bool WirelessInterface::status(const InterfaceProperties &prop) const
             key = TETHERING;
             break;
         default:
-            break;
+            qWarning() << "Wrong key!!!";
+            return false;
     }
     return map[key].toBool();
 }

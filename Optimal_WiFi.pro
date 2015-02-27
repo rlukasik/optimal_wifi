@@ -16,6 +16,8 @@ CONFIG += sailfishapp
 
 QT += core dbus positioning
 
+CONFIG += c++11
+
 SOURCES += src/Optimal_WiFi.cpp \
     src/device.cpp \
     src/wifi.cpp \
