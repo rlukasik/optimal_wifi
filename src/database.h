@@ -71,7 +71,7 @@ private:
     static const QString m_JSON;
 
     QString m_name;
-
+#warning "ToDo: protect m_db and m_bases by mutex"
     QJsonObject m_db;
 
     static DHash_t m_bases;
@@ -99,6 +99,8 @@ class Database
 public:
     explicit Database(QList<T> *&, const QString &, const QString &name = "elements");
 
+    explicit Database(T *&, const QString &, const QString &name = "element");
+
     ~Database();
 
 private:
@@ -109,6 +111,10 @@ private:
     void load();
 
     void save() const;
+
+    bool m_areMany;
+
+    T m_element;
 
     QList<T> m_elements;
 
@@ -123,10 +129,23 @@ template<class T>
 Database<T>::Database(QList<T> *&elements, const QString &dbName, const QString &elementName):
     m_dbName(dbName),
     m_elementName(elementName),
-    m_db(nullptr)
+    m_db(nullptr),
+    m_areMany(true)
 {
     m_db = DatabaseSingleton::Instance(m_dbName);
     elements = &m_elements;
+    load();
+}
+
+template<class T>
+Database<T>::Database(T *&element, const QString &dbName, const QString &elementName):
+    m_dbName(dbName),
+    m_elementName(elementName),
+    m_db(nullptr),
+    m_areMany(false)
+{
+    m_db = DatabaseSingleton::Instance(m_dbName);
+    element = &m_element;
     load();
 }
 
@@ -140,10 +159,14 @@ template<class T>
 void Database<T>::read(const QJsonValue &json)
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__ << json;
-    m_elements.clear();
-    QJsonArray aArray = json.toArray();
-    for (int i = 0; i < aArray.size(); ++i) {
-        m_elements.append(T(aArray[i].toObject()));
+    if (m_areMany) {
+        m_elements.clear();
+        QJsonArray aArray = json.toArray();
+        for (int i = 0; i < aArray.size(); ++i) {
+            m_elements.append(T(aArray[i].toObject()));
+        }
+    } else {
+        m_element = T(json.toObject());
     }
 }
 
@@ -151,14 +174,20 @@ template<class T>
 void Database<T>::write(QJsonValue &json) const
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
-    QJsonArray aArray;
-    foreach (const T t, m_elements) {
-        QJsonObject aObject;
-        if (t.write(aObject)) {
-            aArray.append(aObject);
+    if (m_areMany) {
+        QJsonArray aArray;
+        foreach (const T t, m_elements) {
+            QJsonObject aObject;
+            if (t.write(aObject)) {
+                aArray.append(aObject);
+            }
         }
+        json = aArray;
+    } else {
+        QJsonObject aObject;
+        m_element.write(aObject);
+        json = aObject;
     }
-    json = aArray;
 }
 
 template<class T>
