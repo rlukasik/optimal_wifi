@@ -46,6 +46,52 @@
 #include <QList>
 #include <QFile>
 #include <QString>
+#include <QTime>
+#include <QHash>
+#include <QDebug>
+#include <memory>
+
+class DatabaseSingleton
+{
+public:
+    static std::shared_ptr<DatabaseSingleton> Instance(const QString &);
+
+    void save(const QString &, const QJsonValue &);
+
+    bool load(const QString &, QJsonValue &) const;
+
+    ~DatabaseSingleton();
+
+protected:
+    explicit DatabaseSingleton(const QString &);
+
+private:
+    typedef QHash<QString, std::shared_ptr<DatabaseSingleton>> DHash_t;
+
+    static const QString m_JSON;
+
+    QString m_name;
+
+    QJsonObject m_db;
+
+    static DHash_t m_bases;
+};
+
+inline void DatabaseSingleton::save(const QString &key, const QJsonValue &json)
+{
+    qDebug() << QTime::currentTime().toString() << __FUNCTION__ << key;
+    m_db.insert(key, json);
+}
+
+inline bool DatabaseSingleton::load(const QString &key, QJsonValue &json) const
+{
+    qDebug() << QTime::currentTime().toString() << __FUNCTION__ << key;
+    if (m_db[key].isUndefined()) {
+        return false;
+    }
+    json = m_db[key];
+    return true;
+}
 
 template <class T>
 class Database
@@ -56,9 +102,9 @@ public:
     ~Database();
 
 private:
-    void read(const QJsonObject &);
+    void read(const QJsonValue &);
 
-    void write(QJsonObject &) const;
+    void write(QJsonValue &) const;
 
     void load();
 
@@ -66,16 +112,20 @@ private:
 
     QList<T> m_elements;
 
-    QString m_fileName;
+    QString m_dbName;
 
-    QString m_name;
+    QString m_elementName;
+
+    std::shared_ptr<DatabaseSingleton> m_db;
 };
 
 template<class T>
-Database<T>::Database(QList<T> *&elements, const QString &fileName, const QString &name):
-    m_fileName(fileName),
-    m_name(name)
+Database<T>::Database(QList<T> *&elements, const QString &dbName, const QString &elementName):
+    m_dbName(dbName),
+    m_elementName(elementName),
+    m_db(nullptr)
 {
+    m_db = DatabaseSingleton::Instance(m_dbName);
     elements = &m_elements;
     load();
 }
@@ -87,18 +137,18 @@ Database<T>::~Database()
 }
 
 template<class T>
-void Database<T>::read(const QJsonObject &json)
+void Database<T>::read(const QJsonValue &json)
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__ << json;
     m_elements.clear();
-    QJsonArray aArray = json[m_name].toArray();
+    QJsonArray aArray = json.toArray();
     for (int i = 0; i < aArray.size(); ++i) {
         m_elements.append(T(aArray[i].toObject()));
     }
 }
 
 template<class T>
-void Database<T>::write(QJsonObject &json) const
+void Database<T>::write(QJsonValue &json) const
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
     QJsonArray aArray;
@@ -108,36 +158,26 @@ void Database<T>::write(QJsonObject &json) const
             aArray.append(aObject);
         }
     }
-    json[m_name] = aArray;
+    json = aArray;
 }
 
 template<class T>
 void Database<T>::load()
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
-    QFile loadFile(m_fileName);
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning() << QTime::currentTime().toString() << "Couldn't open" << m_fileName << "file.";
-        return;
+    QJsonValue lValue;
+    if (m_db->load(m_elementName, lValue)) {
+        read(lValue);
     }
-    QByteArray saveData = loadFile.readAll();
-    QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
-    read(loadDoc.object());
 }
 
 template<class T>
 void Database<T>::save() const
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
-    QFile saveFile(m_fileName);
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning() << QTime::currentTime().toString() << "Couldn't open" << m_fileName << "file.";
-        return;
-    }
-    QJsonObject lObject;
-    write(lObject);
-    QJsonDocument saveDoc(lObject);
-    saveFile.write(saveDoc.toJson());
+    QJsonValue lValue;
+    write(lValue);
+    m_db->save(m_elementName, lValue);
 }
 
 #endif // DATABASE_H

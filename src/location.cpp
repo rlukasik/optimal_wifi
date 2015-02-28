@@ -30,6 +30,7 @@
 
 #include "location.h"
 #include "device.h"
+#include "config.h"
 
 Location::Location(QObject *parent) :
     QObject(parent),
@@ -41,7 +42,7 @@ Location::Location(QObject *parent) :
 {
     m_source = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_source) {
-        m_database = new Database<Area>(m_areas, JSON_LOCATION_FILE, JSON_AREAS);
+        m_database = new Database<Area>(m_areas, DATABASE, JSON_AREAS);
         m_source->setPreferredPositioningMethods(QGeoPositionInfoSource::NonSatellitePositioningMethods);
         m_source->setUpdateInterval(SECONDS(10));
         connect(m_source, SIGNAL(positionUpdated(QGeoPositionInfo)), SLOT(positionUpdated(QGeoPositionInfo)));

@@ -47,8 +47,6 @@
 
 #define BUFFER_SIZE 100
 
-#define JSON_LOCATION_FILE "location.json"
-
 #define JSON_AREAS      "areas"
 #define JSON_LATITUDE   "latitude"
 #define JSON_LONGITUDE  "longitude"

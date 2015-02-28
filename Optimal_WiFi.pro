@@ -23,7 +23,8 @@ SOURCES += src/Optimal_WiFi.cpp \
     src/wifi.cpp \
     src/gsm.cpp \
     src/wirelessinterface.cpp \
-    src/location.cpp
+    src/location.cpp \
+    src/database.cpp
 
 OTHER_FILES += qml/Optimal_WiFi.qml \
     qml/cover/CoverPage.qml \
@@ -46,5 +47,6 @@ HEADERS += \
     src/gsm.h \
     src/wirelessinterface.h \
     src/location.h \
-    src/database.h
+    src/database.h \
+    src/config.h
 
