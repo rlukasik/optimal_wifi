@@ -185,8 +185,9 @@ void Database<T>::write(QJsonValue &json) const
         json = aArray;
     } else {
         QJsonObject aObject;
-        m_element.write(aObject);
-        json = aObject;
+        if (m_element.write(aObject)) {
+            json = aObject;
+        }
     }
 }
 
