@@ -49,6 +49,8 @@
 #include <QTime>
 #include <QHash>
 #include <QDebug>
+#include <QMutex>
+#include <QMutexLocker>
 #include <memory>
 
 class DatabaseSingleton
@@ -70,8 +72,10 @@ private:
 
     static const QString m_JSON;
 
-    QString m_name;
-#warning "ToDo: protect m_db and m_bases by mutex"
+    static QMutex m_smut;
+
+    const QString m_name;
+
     QJsonObject m_db;
 
     static DHash_t m_bases;
@@ -112,8 +116,6 @@ private:
 
     void save() const;
 
-    bool m_areMany;
-
     T m_element;
 
     QList<T> m_elements;
@@ -122,6 +124,8 @@ private:
 
     QString m_elementName;
 
+    bool m_areMany;
+
     std::shared_ptr<DatabaseSingleton> m_db;
 };
 
@@ -129,7 +133,6 @@ template<class T>
 Database<T>::Database(QList<T> *&elements, const QString &dbName, const QString &elementName):
     m_dbName(dbName),
     m_elementName(elementName),
-    m_db(nullptr),
     m_areMany(true)
 {
     m_db = DatabaseSingleton::Instance(m_dbName);
@@ -141,7 +144,6 @@ template<class T>
 Database<T>::Database(T *&element, const QString &dbName, const QString &elementName):
     m_dbName(dbName),
     m_elementName(elementName),
-    m_db(nullptr),
     m_areMany(false)
 {
     m_db = DatabaseSingleton::Instance(m_dbName);

@@ -31,16 +31,23 @@
 #include "database.h"
 
 const QString DatabaseSingleton::m_JSON = ".json";
+QMutex DatabaseSingleton::m_smut;
 DatabaseSingleton::DHash_t DatabaseSingleton::m_bases;
 
 std::shared_ptr<DatabaseSingleton> DatabaseSingleton::Instance(const QString &name)
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__ << name;
+    //Double-Checked Locking Pattern
+    //http://www.drdobbs.com/cpp/c-and-the-perils-of-double-checked-locki/184405726
     DHash_t::iterator i = m_bases.find(name);
     if (m_bases.end() == i) {
-        std::shared_ptr<DatabaseSingleton> base(new DatabaseSingleton(name));
-        m_bases[name] = base;
-        return base;
+        QMutexLocker locker(&m_smut);
+        i = m_bases.find(name);
+        if (m_bases.end() == i) {
+            std::shared_ptr<DatabaseSingleton> base(new DatabaseSingleton(name));
+            m_bases[name] = base;
+            return base;
+        }
     }
     return *i;
 }
