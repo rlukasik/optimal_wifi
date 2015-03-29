@@ -41,6 +41,7 @@ Device::Device(QObject *parent) :
     m_loc = new Location(this);
 
     connect(m_loc, SIGNAL(areaEntered()), SLOT(areaEntered()));
+    connect(m_wifi, SIGNAL(notRunning()), SLOT(wifiNotRunning()));
 
     if (!isRunning()) {
         start(LowPriority);
@@ -107,6 +108,7 @@ void Device::run()
             m_wifi->activate();
             if (m_wifi->status(WirelessInterface::Connected)) {
                 emit wifiStateChangedToRunning();
+                emit wnameChanged(m_wifi->name());
             } else {
                 m_gsm->activate();
             }
@@ -124,4 +126,10 @@ void Device::areaEntered()
     m_mut.lock();
     wakeAll();
     m_mut.unlock();
+}
+
+void Device::wifiNotRunning()
+{
+    qDebug() << QTime::currentTime().toString() << __FUNCTION__;
+    emit wnameChanged(m_wifi->name());
 }

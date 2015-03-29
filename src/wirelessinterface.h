@@ -61,6 +61,8 @@ public:
 
     bool status(const InterfaceProperties &) const;
 
+    virtual QString name() const { return ""; }
+
 signals:
 
 public slots:

@@ -44,6 +44,7 @@ class Device : public QThread, public QWaitCondition
     Q_OBJECT
     Q_PROPERTY(uint status READ getStatus WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(uint interval READ getInterval WRITE setInterval NOTIFY intervalChanged)
+    Q_PROPERTY(QString wname READ getWname NOTIFY wnameChanged)
 
 public:
     explicit Device(QObject *parent = 0);
@@ -58,15 +59,21 @@ public:
 
     uint getInterval() const { return m_interval; }
 
+    QString getWname() const { return m_wifi->name(); }
+
 signals:
     void statusChanged(uint);
 
     void intervalChanged(uint);
 
+    void wnameChanged(QString);
+
     void wifiStateChangedToRunning();
 
 public slots:
     void areaEntered();
+
+    void wifiNotRunning();
 
 protected:
     void run();

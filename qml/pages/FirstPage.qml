@@ -70,6 +70,9 @@ Page {
                     device.status===1 ? device.status=0 : device.status=1
                 }
             }
+            Label {
+                text: "SSID: " + device.wname
+            }
         }
     }
 }

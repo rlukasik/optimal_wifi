@@ -46,12 +46,28 @@ public:
 
     static bool status(const WirelessInterface::InterfaceProperties &);
 
+    QString name() const;
+
 signals:
+    void notRunning();
 
 public slots:
     void onlineStateChanged();
 
     void onlineStateChangedToNotRunning();
+
+private:
+    class Stats
+    {
+    public:
+        explicit Stats(const QJsonObject &json) { read(json); }
+
+        void read(const QJsonObject &json) {}
+
+        bool write(QJsonObject &json) const {}
+
+    private:
+    };
 
 };
 

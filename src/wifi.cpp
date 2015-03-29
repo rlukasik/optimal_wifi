@@ -70,6 +70,16 @@ bool Wifi::status(const WirelessInterface::InterfaceProperties &prop)
     return wifi.WirelessInterface::status(prop);
 }
 
+QString Wifi::name() const
+{
+    qDebug() << QTime::currentTime().toString() << __FUNCTION__;
+    if (WirelessInterface::status(Connected)) {
+        qDebug() << m_nmgr->defaultConfiguration().name();
+        return m_nmgr->defaultConfiguration().name();
+    }
+    return "";
+}
+
 /* SLOTS */
 void Wifi::onlineStateChanged()
 {
@@ -77,8 +87,12 @@ void Wifi::onlineStateChanged()
     if (WirelessInterface::status(Connected)) {
         breakScan();
     } else {
+        if (!WirelessInterface::status(Powered)) {
+            emit notRunning();
+            return;
+        }
         //start a timer before inactivate() because it might be temporary
-        QTimer::singleShot(SECONDS(10), this, SLOT(onlineStateChangedToNotRunning()));
+        QTimer::singleShot(SECONDS(30), this, SLOT(onlineStateChangedToNotRunning()));
     }
 }
 
@@ -87,5 +101,6 @@ void Wifi::onlineStateChangedToNotRunning()
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
     if (!WirelessInterface::status(Connected)) {
         inactivate();
+        emit notRunning();
     }
 }
