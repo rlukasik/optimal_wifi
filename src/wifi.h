@@ -65,18 +65,6 @@ public slots:
     void stats();
 
 private:
-    class Stats
-    {
-    public:
-        explicit Stats(const QJsonObject &json) { read(json); }
-
-        void read(const QJsonObject &json) {}
-
-        bool write(QJsonObject &json) const {}
-
-    private:
-    };
-
     void session();
 
     QNetworkSession *m_session;
