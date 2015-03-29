@@ -37,6 +37,11 @@ Gsm::Gsm(QObject *parent) :
 
 }
 
+Gsm::~Gsm()
+{
+    delete m_session;
+}
+
 void Gsm::inactivate()
 {
 

@@ -31,6 +31,8 @@
 #ifndef WIFI_H
 #define WIFI_H
 
+#include <QNetworkSession>
+#include <QTimer>
 #include "wirelessinterface.h"
 
 class Wifi: public WirelessInterface
@@ -39,6 +41,8 @@ class Wifi: public WirelessInterface
 
 public:
     explicit Wifi(bool useSlots = true, QObject *parent = 0);
+
+    ~Wifi();
 
     void activate();
 
@@ -51,10 +55,14 @@ public:
 signals:
     void notRunning();
 
+    void statsUpdate(quint64, quint64);
+
 public slots:
     void onlineStateChanged();
 
     void onlineStateChangedToNotRunning();
+
+    void stats();
 
 private:
     class Stats
@@ -69,6 +77,11 @@ private:
     private:
     };
 
+    void session();
+
+    QNetworkSession *m_session;
+
+    QTimer *m_stats;
 };
 
 #endif // WIFI_H

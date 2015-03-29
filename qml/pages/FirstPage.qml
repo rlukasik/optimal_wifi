@@ -73,6 +73,12 @@ Page {
             Label {
                 text: "SSID: " + device.wname
             }
+            Label {
+                text: "Downloaded data: %1B".arg(device.RX)
+            }
+            Label {
+                text: "Uploaded data: %1B".arg(device.TX)
+            }
         }
     }
 }

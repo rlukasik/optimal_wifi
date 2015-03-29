@@ -34,6 +34,8 @@ Device::Device(QObject *parent) :
     QThread(parent),
     m_active(0),
     m_interval(15),
+    m_rb(0),
+    m_wb(0),
     m_abort(false)
 {
     m_wifi = new Wifi(this);
@@ -42,6 +44,7 @@ Device::Device(QObject *parent) :
 
     connect(m_loc, SIGNAL(areaEntered()), SLOT(areaEntered()));
     connect(m_wifi, SIGNAL(notRunning()), SLOT(wifiNotRunning()));
+    connect(m_wifi, SIGNAL(statsUpdate(quint64,quint64)), SLOT(statsUpdate(quint64,quint64)));
 
     if (!isRunning()) {
         start(LowPriority);
@@ -132,4 +135,12 @@ void Device::wifiNotRunning()
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
     emit wnameChanged(m_wifi->name());
+}
+
+void Device::statsUpdate(quint64 rb,quint64 wb)
+{
+    m_rb = rb;
+    m_wb = wb;
+    emit rxUpdate(m_rb);
+    emit txUpdate(m_wb);
 }

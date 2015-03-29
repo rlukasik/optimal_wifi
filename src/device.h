@@ -38,6 +38,7 @@
 
 #define SECONDS(x) (x)*1000
 #define MINUTES(x) SECONDS(x)*60
+#define MB         (quint64)(1024*1024)
 
 class Device : public QThread, public QWaitCondition
 {
@@ -45,6 +46,8 @@ class Device : public QThread, public QWaitCondition
     Q_PROPERTY(uint status READ getStatus WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(uint interval READ getInterval WRITE setInterval NOTIFY intervalChanged)
     Q_PROPERTY(QString wname READ getWname NOTIFY wnameChanged)
+    Q_PROPERTY(quint64 RX READ getRx NOTIFY rxUpdate)
+    Q_PROPERTY(quint64 TX READ getTx NOTIFY txUpdate)
 
 public:
     explicit Device(QObject *parent = 0);
@@ -61,6 +64,10 @@ public:
 
     QString getWname() const { return m_wifi->name(); }
 
+    quint64 getRx() const { return m_rb; }
+
+    quint64 getTx() const { return m_wb; }
+
 signals:
     void statusChanged(uint);
 
@@ -70,10 +77,16 @@ signals:
 
     void wifiStateChangedToRunning();
 
+    void rxUpdate(quint64);
+
+    void txUpdate(quint64);
+
 public slots:
     void areaEntered();
 
     void wifiNotRunning();
+
+    void statsUpdate(quint64, quint64);
 
 protected:
     void run();
@@ -84,6 +97,10 @@ private:
     uint m_active;
 
     uint m_interval;
+
+    quint64 m_rb;
+
+    quint64 m_wb;
 
     bool m_abort;
 

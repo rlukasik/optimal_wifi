@@ -30,14 +30,24 @@
 
 #include "wifi.h"
 #include "device.h"
-#include <QTimer>
 
 Wifi::Wifi(bool useSlots, QObject *parent):
-    WirelessInterface(QNetworkConfiguration::BearerWLAN, parent)
+    WirelessInterface(QNetworkConfiguration::BearerWLAN, parent),
+    m_session(nullptr),
+    m_stats(nullptr)
 {
     if (useSlots) {
         initSlots();
+        m_stats = new QTimer(this);
+        connect(m_stats, SIGNAL(timeout()), this, SLOT(stats()));
+        m_stats->start(SECONDS(1));
     }
+}
+
+Wifi::~Wifi()
+{
+    delete m_session;
+    delete m_stats;
 }
 
 void Wifi::activate()
@@ -80,11 +90,23 @@ QString Wifi::name() const
     return "";
 }
 
+void Wifi::session()
+{
+    QList<QNetworkConfiguration> configs = m_nmgr->allConfigurations(QNetworkConfiguration::Active);
+    foreach (const QNetworkConfiguration &nc, configs) {
+        if (QNetworkConfiguration::BearerWLAN == nc.bearerType()) {
+            delete m_session;
+            m_session = new QNetworkSession(nc);
+        }
+    }
+}
+
 /* SLOTS */
 void Wifi::onlineStateChanged()
 {
     qDebug() << QTime::currentTime().toString() << __FUNCTION__;
     if (WirelessInterface::status(Connected)) {
+        session();
         breakScan();
     } else {
         if (!WirelessInterface::status(Powered)) {
@@ -102,5 +124,12 @@ void Wifi::onlineStateChangedToNotRunning()
     if (!WirelessInterface::status(Connected)) {
         inactivate();
         emit notRunning();
+    }
+}
+
+void Wifi::stats()
+{
+    if (m_session) {
+        emit statsUpdate(m_session->bytesReceived(), m_session->bytesWritten());
     }
 }

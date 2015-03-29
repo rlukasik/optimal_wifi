@@ -36,7 +36,8 @@ CoverBackground {
         id: label
         anchors.centerIn: parent
         horizontalAlignment: Text.AlignHCenter
-        text: device.status===1 ? (device.wname===""?qsTr("Opt-WiFi: ON"):qsTr("Opt-WiFi: ON<br><b>On-air</b>")) : (device.wname===""?qsTr("Opt-WiFi: OFF"):qsTr("Opt-WiFi: OFF<br><b>On-air</b>"))
+        verticalAlignment: Text.AlignVCenter
+        text: device.status===1 ? (device.wname===""?qsTr("Opt-WiFi: ON<br>"):qsTr("Opt-WiFi: ON<br><b>On-air</b>")) : (device.wname===""?qsTr("Opt-WiFi: OFF<br>"):qsTr("Opt-WiFi: OFF<br><b>On-air</b>"))
     }
 
     CoverActionList {
